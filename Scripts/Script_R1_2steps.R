@@ -2,7 +2,7 @@ library(sna)
 library(Matrix)
 #library(assortnet)
 library(igraph)
-
+library(here)
 
 #Set parameter values
 pn = 0.8
@@ -116,7 +116,7 @@ par(mfrow=c(2,3), mar=c(6,6,1,1))
 degree.mat=array (NA,c(n.rep,N,nrow(params.in)))
 
 #Run the loop
-for (i in 1:nrow(params.in)){
+for (i in 49:nrow(params.in)){
   
   
   for (rep in 1:n.rep){
@@ -127,7 +127,9 @@ for (i in 1:nrow(params.in)){
     diag(network.orig)=0.5
     
     for (zz in 1:burn.in) {
-      output <- update.network(network.orig, params.in$pn.in[i], params.in$pa.in[i], params.in$pr.in[i])
+      output <- try(update.network(network.orig, params.in$pn.in[i], params.in$pa.in[i], params.in$pr.in[i]))
+      if(is(output,"try-error"))  break
+      
       network.orig <- output$network.new#THIS UPDATES THE NETWORK
       
       #Extract values from the simulated network 
@@ -169,11 +171,10 @@ for (i in 1:nrow(params.in)){
     cat(paste0(rep," "))
     
   }
+  save(params.out, file="Data/params_out_2steps.Rdata")
+  save(degree.mat, file="Data/Degree_2steps.Rdata")
 }
 
 ############### END  OF THE SIMULATIONS ###############
 
-
-save(params.out, file="Data/params_out_2steps.Rdata")
-save(degree.mat, file="Data/Degree_2steps.Rdata")
 
