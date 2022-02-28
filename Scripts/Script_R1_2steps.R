@@ -1,8 +1,7 @@
 library(sna)
 library(Matrix)
-#library(assortnet)
 library(igraph)
-
+library(here)
 
 #Set parameter values
 pn = 0.8
@@ -77,7 +76,7 @@ update.network <- function(network, pn, pa, pr) {
     
     indirect_avoid<-names(which(relationships>=50))#if >=50% indirect avoidance, it will become an indirect avoidance (inheritance determined by Pa)
     indirect_friend<-names(which(relationships<50))#if less, it will become an indirect friend (inheritance determined by Pn)
-      
+    
     #Offspring makes new connections with these individuals based on Pr, Pb, and Pa
     rel[as.numeric(neutral)] <- sample(c(0,1,-1),length(neutral),prob=c(1-2*pr,pr,pr),replace=TRUE)#neutral individuals can become anything
     rel[as.numeric(indirect_avoid)] <- sample(c(0,-1),length(indirect_avoid),prob=c(1-pa,pa),replace=TRUE)#inherit avoidances from friends
@@ -127,7 +126,9 @@ for (i in 1:nrow(params.in)){
     diag(network.orig)=0.5
     
     for (zz in 1:burn.in) {
-      output <- update.network(network.orig, params.in$pn.in[i], params.in$pa.in[i], params.in$pr.in[i])
+      output <- try(update.network(network.orig, params.in$pn.in[i], params.in$pa.in[i], params.in$pr.in[i]))
+      if(is(output,"try-error"))  break
+      
       network.orig <- output$network.new#THIS UPDATES THE NETWORK
       
       #Extract values from the simulated network 
@@ -145,13 +146,13 @@ for (i in 1:nrow(params.in)){
       
       #Extract network metrics from the positive network. It is the "observed" network
       params.out[zz,"cc_pos",rep,i] = sna::gtrans(pos, mode = "graph")#Clustering coefficient
-
+      
       g<-igraph::graph_from_incidence_matrix(pos)#transform network into a graph
       wc <- igraph::walktrap.community(g) #looking for structure 
       params.out[zz,"modularity",rep,i] = igraph::modularity(wc)#extract modularity
       n.comp<-sum(igraph::components(g)$csize>2)#extract number of groups (individuals)
       params.out[zz,"n.comp",rep,i] = n.comp
-    
+      
       if (zz==burn.in){
         #Extract individual degrees at the last iteration
         degree.mat[rep,1:N,i]=sna::degree(pos, gmode = "graph")}#Degree distribution
@@ -169,11 +170,8 @@ for (i in 1:nrow(params.in)){
     cat(paste0(rep," "))
     
   }
+  save(params.out, file="Data/params_out_2steps.Rdata")
+  save(degree.mat, file="Data/Degree_2steps.Rdata")
 }
 
 ############### END  OF THE SIMULATIONS ###############
-
-
-save(params.out, file="Data/params_out_2steps.Rdata")
-save(degree.mat, file="Data/Degree_2steps.Rdata")
-

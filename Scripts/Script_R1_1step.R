@@ -1,6 +1,5 @@
 library(sna)
 library(Matrix)
-#library(assortnet)
 library(igraph)
 library(here)
 
@@ -83,7 +82,10 @@ for (i in 1:nrow(params.in)){
     diag(network.orig)=0.5
     
     for (zz in 1:burn.in) {
-      output <- update.network(network.orig, params.in$pn.in[i], params.in$pa.in[i], params.in$pr.in[i])
+      
+      output <- try(update.network(network.orig, params.in$pn.in[i], params.in$pa.in[i], params.in$pr.in[i]))
+      if(is(output,"try-error"))  break
+      
       network.orig <- output$network.new#THIS UPDATES THE NETWORK
       
       #Extract values from the simulated network 
@@ -124,10 +126,8 @@ for (i in 1:nrow(params.in)){
     cat(paste0(rep," "))
     
   }
+  save(params.out, file="Data/params_out_1step.Rdata")
+  save(degree.mat, file="Data/Degree_1step.Rdata")
 }
 
 ############### END  OF THE SIMULATIONS ###############
-
-
-save(params.out, file="Data/params_out.Rdata")
-save(degree.mat, file="Data/Degree.Rdata")
