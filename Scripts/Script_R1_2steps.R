@@ -115,7 +115,7 @@ par(mfrow=c(2,3), mar=c(6,6,1,1))
 degree.mat=array (NA,c(n.rep,N,nrow(params.in)))
 
 #Run the loop
-for (i in 1:nrow(params.in)){
+for (i in 49:nrow(params.in)){
   
   
   for (rep in 1:n.rep){
