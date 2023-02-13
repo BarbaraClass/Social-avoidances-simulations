@@ -28,34 +28,34 @@ update.network <- function(network, pn, pa, pr) {
   N <- N-1
   
   #One randomly chosen individual reproduces
-  repro <- sample(1:N, 1)
+  #repro <- sample(1:N, 1)
   
   # Add this new individual
   N <- N + 1
   
-  # Generate the relationships of this new individual: by default 0
-  rel <- rep(0, N)
-  rel[N]<-0.5
+  # Generate the relationships of this new individual: random
+  rel <- sample(c(0,1,-1),N,prob=c(1-2*pr,pr,pr),replace=TRUE)
+  rel[N]<-0.5#relationship with itself.by convention 0.5
   
   # offspring inherits mother's avoidances: depends on the probability to inherit them from mother Pa
-  neg.edges <- which(network[repro,]==-1)
-  rel[neg.edges] <- sample(c(0,-1),length(neg.edges),prob=c(1-pa,pa),replace=TRUE)
+  #neg.edges <- which(network[repro,]==-1)
+  #rel[neg.edges] <- sample(c(0,-1),length(neg.edges),prob=c(1-pa,pa),replace=TRUE)
   
   # offspring inherits mother's friends: depends on the probability to inherit them from mother Pn
-  pos.edges <- which(network[repro,]==1)
-  rel[pos.edges] <- sample(c(0,1),length(pos.edges),prob=c(1-pn,pn),replace=TRUE)
+  #pos.edges <- which(network[repro,]==1)
+  #rel[pos.edges] <- sample(c(0,1),length(pos.edges),prob=c(1-pn,pn),replace=TRUE)
   
   #Relationship between the new individual and its parent
-  rel[repro] <- 1
+ # rel[repro] <- 1
   
   #potential new partners (friends or avoidances) an individual can then have (unknown to its mother)
-  no.edges <- which(network[repro,]==0)
+  no.edges <- which(rel==0)
   
   
   if (length(no.edges)>0){
     #combine offspring's relationships and new potential partners' relationships
     all.rel<-cbind(rel[-N],network[,no.edges])
-    all.rel<-all.rel[-repro,]#remove relationships with mother, as these were accounted for in the 1st step
+    #all.rel<-all.rel[-repro,]#remove relationships with mother, as these were accounted for in the 1st step
     colnames(all.rel)<-c("offspring", no.edges)
     partner=all.rel[,1]
     partner[which (partner==-1)]=0#individuals cannot inherit relationships from avoidances so put as zero
@@ -98,7 +98,7 @@ update.network <- function(network, pn, pa, pr) {
 ############### START  OF THE SIMULATIONS ###############
 
 #Set parameter values
-params.in <- data.frame(expand.grid(pn.in = c(0.3,0.4,0.5,0.6,0.7,0.8),pa.in = c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8), pr.in = c(0.001,0.01,0.05)))
+params.in <- data.frame(expand.grid(pn.in = c(0.3,0.4,0.5,0.6,0.7,0.8),pa.in = c(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8), pr.in = 0.01))
 
 N <- 50			# Number of individuals
 n.rep <- 100 # Number of replicates
@@ -170,8 +170,8 @@ for (i in 1:nrow(params.in)){
     cat(paste0(rep," "))
     
   }
-  save(params.out, file="Data/params_out_2steps.Rdata")
-  save(degree.mat, file="Data/Degree_2steps.Rdata")
+  save(params.out, file="Data/params_out_onlystep2.Rdata")
+  save(degree.mat, file="Data/Degree_onlystep2.Rdata")
 }
 
 ############### END  OF THE SIMULATIONS ###############

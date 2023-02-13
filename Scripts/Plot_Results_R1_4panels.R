@@ -17,6 +17,171 @@ load(file="Data/params_out_2steps.Rdata")
 params.out.2=params.out
 rm(params.out)
 
+
+####Plot Number of affiliates####
+jpeg("Plots/Associates_4panels_r001.jpeg",width=800,height=800,quality=100)
+
+par(mfrow=c(2,2),mar=c(5,5,5,2))
+
+associates=t(params.out.1[burn.in,"n_pos",,])
+associates=rowMeans(associates,na.rm=T)
+associates=data.frame(associates,params.in)
+associates=associates[which(associates$pr.in==0.01 & associates$pa.in %in% c(0,0.3,0.6,0.8)) ,]
+associates=associates[order(associates$pa.in,associates$pn.in),]
+
+plot(associates$pn.in[1:6],associates$associates[1:6], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pn", ylab="Number of affiliates",type="l",main=list("1 step",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(associates$pn.in[7:12],associates$associates[7:12], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pn.in[13:18],associates$associates[13:18], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pn.in[19:24],associates$associates[19:24], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+
+associates=t(params.out.2[burn.in,"n_pos",,])
+associates=rowMeans(associates,na.rm=T)
+associates=data.frame(associates,params.in)
+associates=associates[which(associates$pr.in==0.01 & associates$pa.in %in% c(0,0.3,0.6,0.8)) ,]
+associates=associates[order(associates$pa.in,associates$pn.in),]
+
+plot(associates$pn.in[1:6],associates$associates[1:6], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pn", ylab="Number of affiliates",type="l",main=list("2 steps",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(associates$pn.in[7:12],associates$associates[7:12], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pn.in[13:18],associates$associates[13:18], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pn.in[19:24],associates$associates[19:24], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+
+associates=t(params.out.1[burn.in,"n_pos",,])
+associates=rowMeans(associates,na.rm=T)
+associates=data.frame(associates,params.in)
+associates=associates[which(associates$pr.in==0.01 & associates$pn.in %in% c(0.3,0.4,0.5,0.8)) ,]
+associates=associates[order(associates$pn.in,associates$pa.in),]
+
+plot(associates$pa.in[1:9],associates$associates[1:9], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pa", ylab="Number of affiliates",type="l",main=list("",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(associates$pa.in[10:18],associates$associates[10:18], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pa.in[19:27],associates$associates[19:27], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pa.in[28:36],associates$associates[28:36], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+
+associates=t(params.out.2[burn.in,"n_pos",,])
+associates=rowMeans(associates,na.rm=T)
+associates=data.frame(associates,params.in)
+associates=associates[which(associates$pr.in==0.01 & associates$pn.in %in% c(0.3,0.4,0.5,0.8)) ,]
+associates=associates[order(associates$pn.in,associates$pa.in),]
+
+plot(associates$pa.in[1:9],associates$associates[1:9], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pa", ylab="Number of affiliates",type="l",main=list("",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(associates$pa.in[10:18],associates$associates[10:18], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pa.in[19:27],associates$associates[19:27], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(associates$pa.in[28:36],associates$associates[28:36], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+dev.off()
+
+####Plot Number of avoidances####
+jpeg("Plots/Avoidances_4panels_r001.jpeg",width=800,height=800,quality=100)
+
+par(mfrow=c(2,2),mar=c(5,5,5,2))
+
+avoidances=t(params.out.1[burn.in,"n_neg",,])
+avoidances=rowMeans(avoidances,na.rm=T)
+avoidances=data.frame(avoidances,params.in)
+avoidances=avoidances[which(avoidances$pr.in==0.01 & avoidances$pa.in %in% c(0,0.3,0.6,0.8)) ,]
+avoidances=avoidances[order(avoidances$pa.in,avoidances$pn.in),]
+
+plot(avoidances$pn.in[1:6],avoidances$avoidances[1:6], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pn", ylab="Number of avoidances",type="l",main=list("1 step",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(avoidances$pn.in[7:12],avoidances$avoidances[7:12], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pn.in[13:18],avoidances$avoidances[13:18], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pn.in[19:24],avoidances$avoidances[19:24], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+
+avoidances=t(params.out.2[burn.in,"n_neg",,])
+avoidances=rowMeans(avoidances,na.rm=T)
+avoidances=data.frame(avoidances,params.in)
+avoidances=avoidances[which(avoidances$pr.in==0.01 & avoidances$pa.in %in% c(0,0.3,0.6,0.8)) ,]
+avoidances=avoidances[order(avoidances$pa.in,avoidances$pn.in),]
+
+plot(avoidances$pn.in[1:6],avoidances$avoidances[1:6], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pn", ylab="Number of avoidances",type="l",main=list("2 steps",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(avoidances$pn.in[7:12],avoidances$avoidances[7:12], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pn.in[13:18],avoidances$avoidances[13:18], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pn.in[19:24],avoidances$avoidances[19:24], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+
+avoidances=t(params.out.1[burn.in,"n_neg",,])
+avoidances=rowMeans(avoidances,na.rm=T)
+avoidances=data.frame(avoidances,params.in)
+avoidances=avoidances[which(avoidances$pr.in==0.01 & avoidances$pn.in %in% c(0.3,0.4,0.5,0.8)) ,]
+avoidances=avoidances[order(avoidances$pn.in,avoidances$pa.in),]
+
+plot(avoidances$pa.in[1:9],avoidances$avoidances[1:9], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pa", ylab="Number of avoidances",type="l",main=list("",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(avoidances$pa.in[10:18],avoidances$avoidances[10:18], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pa.in[19:27],avoidances$avoidances[19:27], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pa.in[28:36],avoidances$avoidances[28:36], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+
+avoidances=t(params.out.2[burn.in,"n_neg",,])
+avoidances=rowMeans(avoidances,na.rm=T)
+avoidances=data.frame(avoidances,params.in)
+avoidances=avoidances[which(avoidances$pr.in==0.01 & avoidances$pn.in %in% c(0.3,0.4,0.5,0.8)) ,]
+avoidances=avoidances[order(avoidances$pn.in,avoidances$pa.in),]
+
+plot(avoidances$pa.in[1:9],avoidances$avoidances[1:9], ylim=c(0,1200),col=cols[2],lwd=2,
+     xlab="Pa", ylab="Number of avoidances",type="l",main=list("",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(avoidances$pa.in[10:18],avoidances$avoidances[10:18], ylim=c(0,1200),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pa.in[19:27],avoidances$avoidances[19:27], ylim=c(0,1200),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(avoidances$pa.in[28:36],avoidances$avoidances[28:36], ylim=c(0,1200),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+dev.off()
+
 ####Plot modularity####
 jpeg("Plots/Modularity_4panels_r001.jpeg",width=800,height=800,quality=100)
 

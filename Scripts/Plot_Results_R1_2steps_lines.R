@@ -329,3 +329,56 @@ plot(degrees$pa.in[28:36],degrees$degrees[28:36], ylim=c(0.25,0.8),col=cols[8],l
      xaxt="n",yaxt="n",xlab="", ylab="",type="l")
 
 dev.off()
+
+
+#Relationship between density and degree CV in different scenarios?
+load(file="Data/Degree_2steps.Rdata")
+degrees_sd=as.data.frame(apply(degree.mat, c(1,3), sd))#variance of degrees for each replicate of each scenario
+degrees_mean=as.data.frame(apply(degree.mat, c(1,3), mean))#mean of degrees for each replicate of each scenario
+degrees_CV=degrees_sd/degrees_mean
+degrees_var=degrees_sd^2
+Npos=params.out[burn.in,"n_pos",,]
+Density=(2*Npos)/ (49*50)
+Denom= Npos*50*(1-Density)
+VG=(49/Denom)*degrees_var
+
+degrees=colMeans(VG,na.rm=T)
+degrees=data.frame(degrees,params.in)
+degrees=degrees[which(degrees$pr.in==0.01 & degrees$pn.in %in% c(0.3,0.4,0.5,0.6)) ,]
+degrees=degrees[order(degrees$pn.in,degrees$pa.in),]
+summary(degrees)
+plot(degrees$pa.in[1:9],degrees$degrees[1:9], ylim=c(-0.1,0.5),col=cols[2],lwd=2,
+     xlab="Pa", ylab="Degreee CV",type="l",main=list("Pr=0.01",cex=2,font=1),cex.axis=1.5,cex.lab=2)
+par(new=TRUE)
+plot(degrees$pa.in[10:18],degrees$degrees[10:18], ylim=c(-0.1,0.5),col=cols[4],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(degrees$pa.in[19:27],degrees$degrees[19:27], ylim=c(-0.1,0.5),col=cols[6],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+par(new=TRUE)
+plot(degrees$pa.in[28:36],degrees$degrees[28:36], ylim=c(-0.1,0.5),col=cols[8],lwd=2,
+     xaxt="n",yaxt="n",xlab="", ylab="",type="l")
+
+#Test if independent from density at the between scenario level: It is not
+Npos=t(params.out[burn.in,"n_pos",,])
+Npos=rowMeans(Npos,na.rm=T)
+Npos=data.frame(Npos,params.in)
+Npos=Npos[which(Npos$pr.in==0.01 & Npos$pn.in %in% c(0.3,0.4,0.5,0.8)) ,]
+Npos=Npos[order(Npos$pn.in,Npos$pa.in),]
+
+plot(Npos$Npos,degrees$degree)
+cor(Npos$Npos,degrees$degree)#Very high
+
+#Within scenarios: most of the time it is not independent
+
+cors=vector()
+pb=vector()
+rows.params=which(params.in$pr.in==0.01 & params.in$pn.in %in% c(0.3,0.4,0.5,0.8))
+for ( i in 1:length(rows.params)){
+   Density_vec=Density[,rows.params[i]]
+   VGvec=as.numeric(VG[,rows.params[i]])
+   pb=c(pb,length(which(abs(VGvec)>1)))
+    VGvec[which(abs(VGvec)>1)]=NA
+    cors=c(cors,cor(Density_vec,VGvec))}
+
+Pb=data.frame(pb,cors,params.in[rows.params,])
